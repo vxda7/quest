@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% block body %}
+  <h1>Index</h1>
+  <p>{{user}}</p>
+  <a href="{% url 'accounts:signup' %}">SignUp</a>
+  <a href="{% url 'accounts:login' %}">Login</a>
+  <a href="{% url 'accounts:logout' %}">Logout</a>
+  <a href="{% url 'board:create' %}">Write</a>
+  {% for board in boards %}
+    <p>{{board.user}}</p>
+    <p>{{board.content}}</p>
+    <p>{{board.user_likes.all.count}}</p>
+    <a href="{% url 'board:like' board.id %}">Like</a>
+    <form action="{% url 'board:comment_create' board.id %}" method="post">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      <input type="submit">
+    </form>
+    {% for comment in board.comment_set.all %}
+      <span>{{comment.user}}</span> <p></p> <span>{{comment.content}}</span>
+      <form action="{% url 'board:comment_delete' comment.id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="댓글삭제">
+      </form>
+    {% endfor %}
+    <hr>
+  {% endfor %}
+{% endblock %}
